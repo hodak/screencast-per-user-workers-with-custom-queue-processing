@@ -1,0 +1,2 @@
+defmodule Restaurant do
+end
