@@ -7,7 +7,12 @@ defmodule Restaurant.WorkerTest do
   end
 
   test "it runs an action and returns its result", %{worker_pid: pid} do
-    IO.inspect pid
-    assert 1 == 1
+    action = fn(_) -> :ok end
+    assert :ok == Restaurant.Worker.call_action(pid, action)
+  end
+
+  test "it runs an action with an argument", %{worker_pid: pid} do
+    action = fn(x) -> x end
+    assert :hodor == Restaurant.Worker.call_action(pid, action, :hodor)
   end
 end
