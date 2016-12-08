@@ -10,12 +10,12 @@ defmodule Restaurant.Pool do
   end
 
   def handle_call({:worker, id}, _from, workers) do
-    case Map.get(workers, id) do
-      nil ->
-        {:ok, new_worker} = Restaurant.Worker.start_link
-        {:reply, new_worker, Map.put(workers, id, new_worker)}
-      worker ->
-        {:reply, worker, workers}
+    worker = Map.get(workers, id)
+    if worker && Process.alive?(worker) do
+      {:reply, worker, workers}
+    else
+      {:ok, new_worker} = Restaurant.WorkerSupervisor.start_worker
+      {:reply, new_worker, Map.put(workers, id, new_worker)}
     end
   end
 end
